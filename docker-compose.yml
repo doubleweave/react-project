@@ -1,0 +1,47 @@
+version: "3.0"
+
+services:
+ mongo:
+  image: mongo:latest
+  container_name: mongo_db
+  ports: 
+   - "27018:27017"
+  volumes:
+   - mongoConfi:/data/configdb
+   - mongodatab:/data/db
+  networks:
+   - direct_employment
+
+ direct_server:
+  build: ./direct_employment_server
+  container_name: direct_server
+  ports:
+   - "4000:4000"
+  networks:
+   - direct_employment
+  depends_on:
+   - mongo
+
+ direct_client:
+  build: ./direct_employment_client
+  container_name: direct_client
+  ports:
+   - "3000:3000"
+  networks:
+   - direct_employment
+  depends_on:
+   - mongo
+   - direct_server
+
+volumes:
+ mongoConfi:
+  external:
+   false
+ mongodatab:
+  external:
+   false
+
+networks:
+ direct_employment:
+  external:
+   false
