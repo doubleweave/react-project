@@ -16,6 +16,7 @@ import {withRouter} from 'react-router-dom';
 const styles = (theme) => ({
     root: {
         marginBottom: '56px',
+        backgroundColor: '#dcdcdc',
     },
     card: {
         height: 200,
@@ -23,6 +24,8 @@ const styles = (theme) => ({
         flexDirection: "column",
         justifyContent: "center",
         alignItems: 'center',
+        background: '#566e92',
+        margin: '10px 0',
     },
 });
 

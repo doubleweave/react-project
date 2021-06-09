@@ -18,11 +18,22 @@ import {withRouter} from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 
-const styles = {
+const styles = theme => ({
     stickToBottom: {
-        width: '100%',
+        [theme.breakpoints.up('xs')]: {
+            width: '100%',
+            margin: '0 auto',
+        },
+        [theme.breakpoints.between('sm', 'lg')]: {
+            width: '380px',
+            margin: '0 auto',
+        },
         position: 'fixed',
+        left: '50%',
         bottom: 0,
+        transform: 'translateX(-50%)',
+        backgroundColor: '#f5f5f5',
+        
     },
     bottomBadge: {
         display: 'flex',
@@ -30,7 +41,7 @@ const styles = {
         justifyContent: 'center',
         alignItems: 'center',
     },
-};
+});
 
 
 class Nav_Footer extends Component {
@@ -47,7 +58,6 @@ class Nav_Footer extends Component {
     componentDidMount() {
         const value = this.props.location.pathname;
         this.setState({value});
-        console.log('value in NavFooter, CDM', value);
     }
 
     handleChange = (event, value) => {
@@ -76,17 +86,10 @@ class Nav_Footer extends Component {
         const {classes, unReadCount} = this.props;
         let {navList} = this.props;
 
-				console.log('unReadCount number in NavFoot:', unReadCount);
-
-        /*        // Check path to show the right main page
-                const path = this.props.location.pathname;
-                const hidePage = path === '/employer' ? '/employee' : '/employer';
-                const newNavList = navList.filter(nav => hidePage !== nav.path);*/
 
         // Check hide props to hide page
         navList = navList.filter(nav => !nav.hide);
 
-        console.log('newNavList', navList);
 
         return (
             <Fragment>
@@ -99,12 +102,9 @@ class Nav_Footer extends Component {
                     {
                         navList.map((nav) => {
                             return (
-
                                 <BottomNavigationAction
                                     key={nav.text}
-                                    // label={nav.text}
                                     value={nav.path}
-                                    // icon={this.renderSwitch(nav.icon)}
                                     label={
                                         <Badge
                                             badgeContent={nav.path === '/message' ? unReadCount : 0}

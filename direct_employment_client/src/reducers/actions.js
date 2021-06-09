@@ -78,10 +78,6 @@ export const register = (user) => {
     // async ajax action
     return async dispatch => {
         //send req to server
-        /*const promise = reqRegister(user);
-        promise.then(response => {
-            const result = response.data;
-        });*/
         const response = await reqRegister({username, password, userType});   // {code: 0/1, user: {}, msg: ''}
         const result = response.data;
         if(result.code === 0) { //success
@@ -139,11 +135,14 @@ export const getUserList = (userType) => {
 
 function initIO(dispatch, userId) {
 	console.log('In actions, initIO');
-    if(!io.socket) {
-        io.socket = io('ws://localhost:4000');
-        // io.socket = io('ws://172.22.0.3:4000');
-        // io.socket = io('ws://direct_server:4000');
-    }
+    io.socket = io('ws://localhost:4000',{'forceNew':true });
+    
+    // if(!io.socket) {
+    //     // io.socket = io('ws://localhost:4000');
+    //     io.socket = io('ws://localhost:4000',{'forceNew':true });
+    //     // io.socket = io('ws://172.22.0.3:4000');
+    //     // io.socket = io('ws://direct_server:4000');
+    // }
 
     io.socket.on('receiveMsg', function(chatMsg) {
         console.log('Client receive message from server', chatMsg);
@@ -163,16 +162,24 @@ export const sendMsg = ({from, to, content}) => {
     };
 };
 
+export const disconnected = (() => {
+    return dispatch => {
+        if(io.socket) {
+            console.log("！！！！！！！！！！！！client disconnected from server！！！！");
+            io.socket.emit('end');
+        }
+    };
+});
+
 // async get Message List
 async function getMsgList(dispatch, userId) {
-		console.log('In actions, getMsgList userId', userId);
+	console.log('In actions, getMsgList userId', userId);
     initIO(dispatch, userId);
     const response = await reqChatMsgList();
     const result = response.data;
     if(result.code === 0) {
         const {users, chatMsgs} = result.data;
-				console.log('In actions -> getMsgList, users and chatMsgs', users, chatMsgs);
-				// console.log('In actions -> getMsgList, userId',userId);
+		console.log('In actions -> getMsgList, users and chatMsgs', users, chatMsgs);
 
         dispatch(receiveMsgList({users, chatMsgs, userId}));
     }

@@ -2,7 +2,7 @@
 * Router container component of Employee Info
 * */
 
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 import {connect} from 'react-redux';
 import {
     AppBar,
@@ -23,8 +23,17 @@ import {
 import AvatarSelector from '../../components/avatarSelector/AvatarSelector';
 import {updateUser} from '../../reducers/actions';
 import {Redirect} from 'react-router-dom';
+import Cookies from 'js-cookie';
+import {resetUser} from '../../reducers/actions';
 
 const styles = {
+    page: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        flexGrow: 1,
+        flexShrink: 1,
+    },
     headerBar: {
         width: '100%',
         textAlign: 'center',
@@ -65,63 +74,69 @@ class Employee_Profile extends Component {
 
     handleSubmit = () => {
         this.props.updateUser(this.state);
+        // Cookies.remove('userId');
+        // this.props.resetUser();
     };
 
     render() {
         const {classes} = this.props;
-        const {avatar, userType} = this.props.user;
+        const {avatar} = this.props.user;
 
         if(avatar) {
-            const path = userType === 'employee' ? '/employee' : '/employer';
-						return <Redirect to={'/login'} />
+            // const path = userType === 'employee' ? '/employee' : '/employer';
+			return <Redirect to={'/login'} />
         }
 
         return (
-            <div>
-                <AppBar position="static">
-                    <Toolbar>
-                        <Typography variant="h6" className={classes.headerBar}>
-                            Employee Info
-                        </Typography>
-                    </Toolbar>
-                </AppBar>
-                <AvatarSelector setAvatar={this.setAvatar}/>
-                <Card>
-                    <List component="nav" aria-label="main mailbox folders">
-                        <ListItem alignItems="flex-start">
-                            <TextField
-                                id="recruitment"
-                                label="Job objective:"
-                                variant="outlined"
-                                fullWidth
-                                onChange={this.handleChange("recruitment")}
-                            />
-                        </ListItem>
-                        <ListItem alignItems="flex-start">
-                            <TextField
-                                multiline
-                                rowsMax={4}
-                                id="info"
-                                label="Self introduction:"
-                                variant="outlined"
-                                fullWidth
-                                onChange={this.handleChange("info")}
-                            />
-                        </ListItem>
-                    </List>
-                </Card>
-
-                <Button
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    className={classes.submitButton}
-                    onClick={this.handleOpen}
-                >
-                    Submit
-                </Button>
-
-								<Dialog
+            <Fragment>
+                <div className={classes.page}>
+                    <div className={classes.top}>
+                        <AppBar position="static">
+                            <Toolbar>
+                                <Typography variant="h6" className={classes.headerBar}>
+                                    Employee Info
+                                </Typography>
+                            </Toolbar>
+                        </AppBar>
+                        <AvatarSelector setAvatar={this.setAvatar}/>
+                        <Card>
+                            <List component="nav" aria-label="main mailbox folders">
+                                <ListItem alignItems="flex-start">
+                                    <TextField
+                                        id="recruitment"
+                                        label="Job objective:"
+                                        variant="outlined"
+                                        fullWidth
+                                        onChange={this.handleChange("recruitment")}
+                                    />
+                                </ListItem>
+                                <ListItem alignItems="flex-start">
+                                    <TextField
+                                        multiline
+                                        rowsMax={4}
+                                        id="info"
+                                        label="Self introduction:"
+                                        variant="outlined"
+                                        fullWidth
+                                        onChange={this.handleChange("info")}
+                                    />
+                                </ListItem>
+                            </List>
+                        </Card>
+                    </div>
+                    <div className={classes.bottom}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            fullWidth
+                            className={classes.submitButton}
+                            onClick={this.handleOpen}
+                        >
+                            Submit
+                        </Button>
+                    </div>
+                </div>
+                <Dialog
                     open={this.state.open}
                     onClose={this.handleClose}
                     aria-labelledby="alert-dialog-title"
@@ -137,12 +152,12 @@ class Employee_Profile extends Component {
                         </Button>
                     </DialogActions>
                 </Dialog>
-            </div>
+            </Fragment>
         );
     };
 }
 
 export default connect(
     state => ({user: state.user}),
-    {updateUser},
+    {updateUser, resetUser},
 )(withStyles(styles)(Employee_Profile));

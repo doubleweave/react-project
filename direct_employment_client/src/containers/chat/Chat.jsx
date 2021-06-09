@@ -7,7 +7,7 @@ import {
     List,
     Grow,
     ListItem,
-		Avatar,
+	Avatar,
     Paper, 
     IconButton,
 } from '@material-ui/core';
@@ -19,7 +19,23 @@ import classNames from 'classnames';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 const styles = (theme) => ({
+    page: {
+        width: '100%',
+        minheight: '100vh',
+        display: 'flex',
+        flex: 1,
+        justifyDirection: 'column',
+        justifyContent: 'space-between',
+    },
+    top: {
+        width: '100%',
+    },
+    bottom: {
+        position: 'fixed',
+        bottom: 0,
+    },
     header: {
+        width: '100%',
         position: 'sticky',
         display: 'flex',
         flexDirection: 'row',
@@ -38,12 +54,14 @@ const styles = (theme) => ({
         flexDirection: 'column',
         overflow: 'auto',
         marginBottom: '45px',
+        background: '#dcdcdc',
     },
     chatBox_showingEmoji: {
         display: 'flex',
         flexDirection: 'column',
         overflow: 'auto',
         marginBottom: '245px',
+        background: '#dcdcdc',
     },
     owner_box: {
         flexDirection: 'row-reverse',
@@ -70,15 +88,6 @@ class Chat extends Component {
         checked: false,
     };
 
-    /*    handleMarginBottom = () => {
-            let {listClass} = this.state;
-            if (listClass === this.props.classes.chatBox) {
-                this.setState({listClass: this.props.classes.chatBox_showingEmoji});
-            } else {
-                this.setState({listClass: this.props.classes.chatBox});
-            }
-        };*/
-
     onChange = (name, value) => {
         this.setState({[name]: value});
     };
@@ -101,6 +110,8 @@ class Chat extends Component {
         let {listClass} = this.state;
         if (listClass === this.props.classes.chatBox) {
             this.setState({listClass: this.props.classes.chatBox_showingEmoji});
+        } else {
+            this.setState({listClass: this.props.classes.chatBox});
         }
     };
 
@@ -152,17 +163,12 @@ class Chat extends Component {
     componentWillUnmount() {
         const to = this.props.user._id;
         const from = this.props.match.params.userId;
-        console.log('In Chat, before change read number, from', from);
-        console.log('In Chat, before change read number, to', to);
         this.props.readMsg(from, to);
-        console.log('tying to change the number of unread', from, to);
     };
 
     render() {
         const {classes, user} = this.props;
         const {users, chatMsgs} = this.props.chat;
-				const {content} = this.state;
-				console.log('content in chat: ', content);
 
         if (!users[user._id]) {
             return null;
@@ -172,100 +178,104 @@ class Chat extends Component {
         const currentChatId = [user._id, targetID].sort().join('_');
 
         const msgs = chatMsgs.filter(msg => msg.chat_id === currentChatId);
-        console.log('msgs', msgs);
 
         const myUser = users[user._id];
         const targetUser = users[targetID];
 
         return (
             <Fragment>
-                <AppBar className={classes.header}>
-                    <IconButton
-                        className={classes.menuButton}
-                        aria-label="back"
-                        onClick={this.handleBack}
-                    >
-                        <ArrowBackIcon/>
-                    </IconButton>
-                    <Toolbar className={classes.counterpart_name}>
-                        <Typography variant='h6'>{targetUser ? targetUser.username : null}</Typography>
-                    </Toolbar>
-                </AppBar>
-                <List
-                    className={classNames(this.state.listClass)}
-                    ref={this.listRef}
-                >
-                    {
-                        msgs.map((msg, index) => {
-                            // const currentMsgUser = users[._id] === msg.from;
-                            if (user._id === msg.to) {
-                                return (
-                                    <Grow
-                                        key={index}
-                                        in={this.state.checked}
-
-                                        {...(this.state.checked ? { timeout: 1000 * 0.5} : {})}
-                                    >
-                                        <ListItem
-
-                                        >
-                                            <Avatar
-                                                alt="Remy Sharp"
-                                                src={`/static/images/avatar/${targetUser ? targetUser.avatar : null}.jpg`}
-                                                className={classes.avatar}
-                                            />
-                                            <Paper
-                                                className={classes.counter_paper}
-                                            >
-                                                <Typography variant='h5'>{msg.content}</Typography>
-                                            </Paper>
-                                        </ListItem>
-                                    </Grow>
-                                );
-                            } else {
-                                return (
-                                    <Grow
-                                        in={this.state.checked}
-
-                                        {...(this.state.checked ? { timeout: 1000 * 0.5 } : {})}
-                                        key={index}
-                                    >
-                                        <ListItem
-
-                                            className={classes.owner_box}
-                                        >
-                                            <Avatar
+                <div className={classes.page}>
+                    <div className={classes.top}>
+                        <AppBar className={classes.header}>
+                            <IconButton
+                                className={classes.menuButton}
+                                aria-label="back"
+                                onClick={this.handleBack}
+                            >
+                                <ArrowBackIcon/>
+                            </IconButton>
+                            <Toolbar className={classes.counterpart_name}>
+                                <Typography variant='h6'>{targetUser ? targetUser.username : null}</Typography>
+                            </Toolbar>
+                        </AppBar>
+                        <List
+                            className={classNames(this.state.listClass)}
+                            ref={this.listRef}
+                        >
+                            {
+                                msgs.map((msg, index) => {
+                                    if (user._id === msg.to) {
+                                        return (
+                                            <Grow
                                                 key={index}
-                                                alt="Remy Sharp"
-                                                src={`/static/images/avatar/${myUser ? myUser.avatar : null}.jpg`}
-                                                className={classes.avatar}
-                                            />
-                                            <Paper
-                                                className={classes.paper}
-                                            >
-                                                <Typography variant='h5'>
-                                                    {msg.content}
-                                                </Typography>
-                                            </Paper>
-                                        </ListItem>
-                                    </Grow>
-                                );
-                            }
-                        })
-                    }
-                </List>
+                                                in={this.state.checked}
 
-                <ChatEmojiList
-                    onEmojiClick={this.onEmojiClick}
-                    isShow={this.state.isShow}
-                />
-                <ChatBotoomInput
-                    content={this.state.content}
-                    onShowEmoji={this.onShowEmoji}
-                    onChange={this.onChange}
-                    onSubmit={this.onSubmit}
-                    onHideEmoji={this.onHideEmoji}
-                />
+                                                {...(this.state.checked ? { timeout: 1000 * 0.5} : {})}
+                                            >
+                                                <ListItem
+
+                                                >
+                                                    <Avatar
+                                                        alt="Remy Sharp"
+                                                        src={`/static/images/avatar/${targetUser ? targetUser.avatar : null}.jpg`}
+                                                        className={classes.avatar}
+                                                    />
+                                                    <Paper
+                                                        className={classes.counter_paper}
+                                                    >
+                                                        <Typography variant='h5'>{msg.content}</Typography>
+                                                    </Paper>
+                                                </ListItem>
+                                            </Grow>
+                                        );
+                                    } else {
+                                        return (
+                                            <Grow
+                                                in={this.state.checked}
+
+                                                {...(this.state.checked ? { timeout: 1000 * 0.5 } : {})}
+                                                key={index}
+                                            >
+                                                <ListItem
+
+                                                    className={classes.owner_box}
+                                                >
+                                                    <Avatar
+                                                        key={index}
+                                                        alt="Remy Sharp"
+                                                        src={`/static/images/avatar/${myUser ? myUser.avatar : null}.jpg`}
+                                                        className={classes.avatar}
+                                                    />
+                                                    <Paper
+                                                        className={classes.paper}
+                                                    >
+                                                        <Typography variant='h5'>
+                                                            {msg.content}
+                                                        </Typography>
+                                                    </Paper>
+                                                </ListItem>
+                                            </Grow>
+                                        );
+                                    }
+                                })
+                            }
+                        </List>              
+                    </div>
+                    <div className={classes.bottom}>
+                        <ChatEmojiList
+                            onEmojiClick={this.onEmojiClick}
+                            isShow={this.state.isShow}
+                        />
+                        <ChatBotoomInput
+                            content={this.state.content}
+                            onShowEmoji={this.onShowEmoji}
+                            onChange={this.onChange}
+                            onSubmit={this.onSubmit}
+                            onHideEmoji={this.onHideEmoji}
+                        />
+                    </div>
+                </div>
+                
             </Fragment>
         );
     };

@@ -7,6 +7,14 @@ import {withStyles} from '@material-ui/core/styles';
 
 const styles = (theme) => ({
     root: {
+        [theme.breakpoints.up('xs')]: {
+            width: '100%',
+            margin: '0 auto',
+        },
+        [theme.breakpoints.between('sm', 'lg')]: {
+            width: '378px',
+            margin: '0 auto',
+        },
         position: 'fixed',
         bottom: '45px',
         variant: "outlined",
@@ -27,7 +35,7 @@ class ChatEmojiList extends Component {
         bottom: false,
     };
 
-    componentWillMount() {
+    componentDidMount() {
         this.emojis = [
             '😀',
             '😃',
@@ -107,7 +115,6 @@ class ChatEmojiList extends Component {
     }
 
     handleEmojiClick = (emoji) => (event) => {
-        console.log('emoji', emoji);
         this.props.onEmojiClick(emoji);
     };
 

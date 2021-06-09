@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 
-const server = 'mongo:27017';
-const database = 'directe_test';
+// const server = '127.0.0.1:27017';   //local and deploy
+const server = 'mongo:27017';    //docker
+const database = 'direct_test';
 
 mongoose.connect(`mongodb://${server}/${database}`, {
     useNewUrlParser: true,

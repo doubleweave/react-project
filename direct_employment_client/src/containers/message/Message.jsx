@@ -20,6 +20,7 @@ import {getUser} from '../../reducers/actions';
 const styles = (theme) => ({
     messageList: {
         marginBottom: '45px',
+        backgroundColor: '#dcdcdc',
     },
 });
 
@@ -78,57 +79,57 @@ class Message extends Component {
 
         return (
             <Fragment>
-                <List
-                    className={classes.messageList}
-                >
-                    {
-                        lastMsgs.map(msg => {
-                            const counterpartUserID = msg.to === user._id? msg.from : msg.to;
-                            const counterpartUser = users[counterpartUserID];
-														{
-															if(!counterpartUser) {
-																this.refreshPage();
-															}
-														}
-                            console.log(counterpartUser);
-                            return (
-                                <ListItem
-                                    key={counterpartUser.username}
-                                >
-                                    <ListItemAvatar>
-                                        <Avatar alt="username" src={
-                                            counterpartUser.avatar
-                                                ?
-                                                `/static/images/avatar/${counterpartUser.avatar}.jpg`
-                                                :
-                                                null
-                                        }/>
-                                    </ListItemAvatar>
-                                    <ListItemText
-                                        primary={msg.content}
-                                        secondary={
-                                            <Fragment>
-                                                <Typography component={'span'} variant={'body2'}>
-                                                    {counterpartUser.username}
-                                                </Typography>
-                                            </Fragment>
-                                        }
-                                    />
-                                    <Badge
-                                        badgeContent={msg.unReadCount}
-                                        color="secondary"
+                <div className={classes.root}>
+                    <List
+                        className={classes.messageList}
+                    >
+                        {
+                            lastMsgs.map(msg => {
+                                const counterpartUserID = msg.to === user._id? msg.from : msg.to;
+                                const counterpartUser = users[counterpartUserID];
+                                if(!counterpartUser) {
+                                    this.refreshPage();
+                                }
+                                console.log(counterpartUser);
+                                return (
+                                    <ListItem
+                                        key={counterpartUser.username}
                                     >
-                                    </Badge>
-                                    <IconButton
-                                        onClick={() => {this.props.history.push(`/chat/${counterpartUserID}`)}}
-                                    >
-                                        <ArrowForwardIcon fontSize='large'/>
-                                    </IconButton>
-                                </ListItem>
-                            );
-                        })
-                    }
-                </List>
+                                        <ListItemAvatar>
+                                            <Avatar alt="username" src={
+                                                counterpartUser.avatar
+                                                    ?
+                                                    `/static/images/avatar/${counterpartUser.avatar}.jpg`
+                                                    :
+                                                    null
+                                            }/>
+                                        </ListItemAvatar>
+                                        <ListItemText
+                                            primary={msg.content}
+                                            secondary={
+                                                <Fragment>
+                                                    <Typography component={'span'} variant={'body2'}>
+                                                        {counterpartUser.username}
+                                                    </Typography>
+                                                </Fragment>
+                                            }
+                                        />
+                                        <Badge
+                                            badgeContent={msg.unReadCount}
+                                            color="secondary"
+                                        >
+                                        </Badge>
+                                        <IconButton
+                                            onClick={() => {this.props.history.push(`/chat/${counterpartUserID}`)}}
+                                        >
+                                            <ArrowForwardIcon fontSize='large'/>
+                                        </IconButton>
+                                    </ListItem>
+                                );
+                            })
+                        }
+                    </List>
+                </div>
             </Fragment>
         );
     }

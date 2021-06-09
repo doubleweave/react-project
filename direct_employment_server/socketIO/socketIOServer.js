@@ -19,15 +19,11 @@ module.exports = function (server) {
                 console.log('Server send message to browser:', chatMsg);
             });
         });
-    });
-
-    /*io.on('connection', function(socket) {
-        console.log('Connected');
-        socket.on('sendMsg', function(data) {
-            console.log('Server receive message from browser:', data);
-
-            io.emit('receiveMsg', data);
-            console.log('Server send message to browser:', data);
+        socket.on('end', function() {
+            // socket.disconnect('unauthorized');
+            socket.disconnect();   
+            console.log('client disconnected from server');
         });
-    });*/
+    
+    });
 };

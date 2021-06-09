@@ -28,7 +28,6 @@ const styles = {
     root: {
         display: 'flex',
         flexFlow: 'column nowrap',
-        // alignItems: 'center',
         justifyContent: 'flex-start',
     },
     item: {
@@ -76,14 +75,12 @@ class Header_selector extends Component {
         icon = icon ? icon : '';
         const avatar = !icon ? '': `/static/images/avatar/${icon}.jpg`;
         this.props.setAvatar(icon);
-        // console.log(avatar);
         this.setState({avatar});
     };
 
     render() {
         const {classes} = this.props;
         const {gridData, avatar} = this.state;
-        // console.log(gridData);
 
         return (
             <div>

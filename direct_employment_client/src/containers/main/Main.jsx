@@ -22,54 +22,71 @@ import {
 
 import {getUser} from '../../reducers/actions';
 
-const styles = {
-    root: {
-        flexGrow: 1,
+const styles = theme => ({
+    page: {
+        [theme.breakpoints.up('xs')]: {
+            width: '100%',
+            margin: '0 auto',
+        },
+        [theme.breakpoints.between('sm', 'xl')]: {
+            width: '380px',
+            margin: '0 auto',
+        },
+        height: '100vh',
+        backgroundColor: '#dcdcdc',
+        flex:1,
+    },
+    top: {
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-around',
+        overflow:'hidden',
     },
     header: {
         position: "sticky ",
         alignItems: 'center',
     },
-};
+});
 
 
 class Main extends Component {
 
     //add properties for Component object
     state = {
-			navList: [ // including all route component data.
-        {
-            path: '/employer',
-            component: Employer,
-            title: 'Employee List',
-            icon: 'FaceIcon', // same name to file in assets
-            text: 'Employee',
-        },
-        {
-            path: '/employee',
-            component: Employee,
-            title: 'Employer List',
-            icon: 'AccountBalanceIcon',
-            text: 'Employer',
-        },
-        {
-            path: '/message',
-            component: Message,
-            title: 'Message List',
-            icon: 'SmsOutlinedIcon',
-            text: 'Message',
-        },
-        {
-            path: '/personal',
-            component: Personal,
-            title: 'Personal List',
-            icon: 'PermIdentityIcon',
-            text: 'Personal',
-        },
-    	],
-		};
+        navList: [ // including all route component data.
+            {
+                path: '/employer',
+                component: Employer,
+                title: 'Employee List',
+                icon: 'FaceIcon', // same name to file in assets
+                text: 'Employee',
+            },
+            {
+                path: '/employee',
+                component: Employee,
+                title: 'Employer List',
+                icon: 'AccountBalanceIcon',
+                text: 'Employer',
+            },
+            {
+                path: '/message',
+                component: Message,
+                title: 'Message List',
+                icon: 'SmsOutlinedIcon',
+                text: 'Message',
+            },
+            {
+                path: '/personal',
+                component: Personal,
+                title: 'Personal List',
+                icon: 'PermIdentityIcon',
+                text: 'Personal',
+            },
+        ],
+    };
 
-    componentWillMount() {
+    componentDidMount() {
         //Found userId in cookie, but no data in Redux user
         const userId = Cookie.get('userId');
         const {_id} = this.props.user;
@@ -77,40 +94,36 @@ class Main extends Component {
             //async action, get user data
             this.props.getUser();
         }
-				this.setNavList();
+		this.setNavList();
     }
 
 
-		setNavList = () => {
-			let {navList} = this.state;
-			const {user} = this.props;
-			// hide nav if user.type is employer or employee, add hide to the other one.
-			if(user.userType === 'employer') {
-				navList = navList.filter(nav => nav.path !== '/employee');
-				this.setState({navList});
-			} else if(user.userType === 'employee'){
-				// navList[0].hide = true;
-				// navList[1].hide = false;
-				navList = navList.filter(nav => nav.path !== '/employer');
-				this.setState({navList});
-			}
-				
-			// this.navList = navList.filter(nav => !nav.hide);
-		};
+    setNavList = () => {
+        let {navList} = this.state;
+        const {user} = this.props;
+        // hide nav if user.type is employer or employee, add hide to the other one.
+        if(user.userType === 'employer') {
+            navList = navList.filter(nav => nav.path !== '/employee');
+            this.setState({navList});
+        } else if(user.userType === 'employee'){
+            navList = navList.filter(nav => nav.path !== '/employer');
+            this.setState({navList});
+        }
+    };
 
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if(prevProps.user !== this.props.user) {
 					this.setNavList();
         }
-				if(prevProps.unReadCount !== this.props.unReadCount) {
-					console.log("someone sending me Message.");
-				}
+        if(prevProps.unReadCount !== this.props.unReadCount) {
+            console.log("someone sending me Message.");
+        }
     }
 
     render() {
         const {classes, user} = this.props;
-				let {navList} = this.state;
+		let {navList} = this.state;
 
         //1. read userId from cookie
         const userId = Cookie.get('userId');
@@ -137,44 +150,49 @@ class Main extends Component {
         const currentNav = navList.find(nav => nav.path === path);
 
         return (
-            <div className={classes.root}>
-                {currentNav
-                    ?
-                    <AppBar className={classes.header}>
-                        <Toolbar>
-                            <Typography variant='h6'>{currentNav.title}</Typography>
-                        </Toolbar>
-                    </AppBar>
-                    :
-                    null
-                }
-                <Switch>
-                    {
-                        navList.map(nav =>
-                            <Route
-                                path={nav.path}
-                                component={nav.component}
-                                key={nav.text}
-                            />
-                        )
+            <div className={classes.page}>
+                <div className={classes.top}>
+                    {currentNav
+                        ?
+                        <AppBar className={classes.header}>
+                            <Toolbar>
+                                <Typography variant='h6'>{currentNav.title}</Typography>
+                            </Toolbar>
+                        </AppBar>
+                        :
+                        null
                     }
+                    <Switch>
+                        {
+                            navList.map(nav =>
+                                <Route
+                                    path={nav.path}
+                                    component={nav.component}
+                                    key={nav.text}
+                                />
+                            )
+                        }
 
-                    <Route path='/employerprofile' component={EmployerProfile}/>
-                    <Route path='/employeeprofile' component={EmployeeProfile}/>
-                    <Route path='/chat/:userId' component={Chat}/>
+                        <Route path='/employerprofile' component={EmployerProfile}/>
+                        <Route path='/employeeprofile' component={EmployeeProfile}/>
+                        <Route path='/chat/:userId' component={Chat}/>
 
-                    <Route component={NotFound}/>
-                </Switch>
+                        <Route component={NotFound}/>
+                    </Switch>
+                </div>
                 {currentNav
                     ?
-                    <NavFooter
-                        navList={navList}
-                        unReadCount={this.props.unReadCount}
-                    />
+                    <div className={classes.bottom}>  
+                        <NavFooter
+                            navList={navList}
+                            unReadCount={this.props.unReadCount}
+                        />
+                    </div>
                     :
                     null
-                }
+                }                
             </div>
+            
         );
     }
 }

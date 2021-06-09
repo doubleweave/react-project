@@ -18,7 +18,7 @@ import {
 } from '@material-ui/core';
 import {withStyles} from '@material-ui/core/styles';
 import Cookies from 'js-cookie';
-import {resetUser} from '../../reducers/actions';
+import {resetUser, disconnected} from '../../reducers/actions';
 
 const styles = (theme) => ({
     root: {
@@ -43,6 +43,7 @@ const styles = (theme) => ({
     detail_info: {
         marginTop: '5px',
         marginBottom: '5px',
+        backgroundColor: '#f5f5f5',
     },
 });
 
@@ -63,6 +64,7 @@ class Personal extends Component {
     handleLogout = () => {
         Cookies.remove('userId');
         this.props.resetUser();
+        this.props.disconnected();
     };
 
     render() {
@@ -146,5 +148,5 @@ class Personal extends Component {
 
 export default connect(
     state => ({user: state.user}),
-    {resetUser}
+    {resetUser, disconnected}
 )(withStyles(styles)(Personal));
